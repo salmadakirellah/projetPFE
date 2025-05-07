@@ -1,11 +1,11 @@
-package com.example.userservice.controller;
+package com.programmingtechie.userservice.controller;
 
-import com.example.userservice.model.Client;
-import com.example.userservice.model.Chauffeur;
-import com.example.userservice.model.Role;
-import com.example.userservice.repository.ClientRepository;
-import com.example.userservice.repository.ChauffeurRepository;
-import com.example.userservice.repository.RoleRepository;
+import com.programmingtechie.userservice.model.Client;
+import com.programmingtechie.userservice.model.Chauffeur;
+import com.programmingtechie.userservice.model.Role;
+import com.programmingtechie.userservice.repository.ClientRepository;
+import com.programmingtechie.userservice.repository.ChauffeurRepository;
+import com.programmingtechie.userservice.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -113,17 +113,20 @@ public class AdminController {
     }
 
     // ✅ Récupérer un client par ID
-@GetMapping("/clients/{id}")
-public ResponseEntity<Client> getClientById(@PathVariable Long id) {
+
+    @GetMapping("/clients/{id}")
+    public ResponseEntity<Client> getClientById(@PathVariable Long id) {
     return clientRepository.findById(id)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
 }
 
 // ✅ Récupérer un chauffeur par ID
-@GetMapping("/chauffeurs/{id}")
-public ResponseEntity<Chauffeur> getChauffeurById(@PathVariable Long id) {
-    return chauffeurRepository.findById(id)
+
+    @GetMapping("/chauffeurs/{id}")
+
+    public ResponseEntity<Chauffeur> getChauffeurById(@PathVariable Long id) {
+        return chauffeurRepository.findById(id)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
 }

@@ -1,22 +1,34 @@
-    package com.example.userservice.service;
+package com.programmingtechie.userservice.service;
 
-import com.example.userservice.dto.*;
-import com.example.userservice.model.*;
-import com.example.userservice.repository.*;
+
+import com.programmingtechie.userservice.dto.*;
+import com.programmingtechie.userservice.model.*;
+import com.programmingtechie.userservice.repository.*;
+
+import com.programmingtechie.userservice.security.CustomUserDetails;
+import com.programmingtechie.userservice.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final UserRepository userRepository;
     private final ClientRepository clientRepository;
     private final ChauffeurRepository chauffeurRepository;
     private final RoleRepository roleRepository;
+    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+
 
     // Enregistrement du client avec ses propres infos
     public void registerClient(ClientRegisterRequest request) {
@@ -60,29 +72,35 @@ public class AuthService {
         Role role = roleRepository.findByName("ADMIN")
                 .orElseThrow(() -> new RuntimeException("Role ADMIN not found"));
 
-        Admin admin = new Admin();
-        admin.setNom(request.getNom());
-        admin.setUsername(request.getUsername());
-        admin.setEmail(request.getEmail());
-        admin.setPassword(passwordEncoder.encode(request.getPassword()));
-        admin.setImage(request.getImage()); 
-        admin.setRole(role);
+        User user = new User();
+        user.setNom(request.getNom());
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setImage(request.getImage());
+        user.setRole(role);
 
-        userRepository.save(admin);
+        userRepository.save(user);
     }
 
     // Login commun
     public AuthResponse login(AuthRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
+        Authentication authentication;
 
-        if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            String token = jwtService.generateToken(user.getUsername(), user.getRole());
+        try {
+            authentication = authenticationManager.authenticate(token);
+        } catch (BadCredentialsException e) {
+            throw new RuntimeException("Incorrect Credentials");
+        }
 
-            // Return a response with token, username, and role
-            return new AuthResponse(token, user.getUsername(), user.getRole().getName());
+        if (authentication.getPrincipal() instanceof CustomUserDetails customUser) {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("is user authenticated: " + SecurityContextHolder.getContext().getAuthentication().isAuthenticated());
+            log.info("authorities" + customUser.getAuthorities().toString());
+            return new AuthResponse(JwtUtil.generateToken(customUser), request.getUsername(), customUser.getAuthorities().toString());
         } else {
-            throw new RuntimeException("Invalid credentials");
+            throw new RuntimeException("Incorrect Credentials");
         }
     }
 }

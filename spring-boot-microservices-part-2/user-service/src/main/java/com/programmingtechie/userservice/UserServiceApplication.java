@@ -1,4 +1,4 @@
-package com.example.userservice;  // Assure-toi que le package est correct
+package com.programmingtechie.userservice;  // Assure-toi que le package est correct
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

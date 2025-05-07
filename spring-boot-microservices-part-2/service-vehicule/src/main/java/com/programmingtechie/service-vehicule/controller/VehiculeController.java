@@ -38,13 +38,13 @@ public class VehiculeController {
     }
 
     @GetMapping("/{id}")
-public ResponseEntity<Vehicule> getVehiculeById(@PathVariable Long id) {
-    Vehicule vehicule = vehiculeService.getVehiculeById(id);
-    if (vehicule != null) {
-        return ResponseEntity.ok(vehicule);
-    } else {
-        return ResponseEntity.notFound().build();
-    }
+    public ResponseEntity<Vehicule> getVehiculeById(@PathVariable Long id) {
+        Vehicule vehicule = vehiculeService.getVehiculeById(id);
+        if (vehicule != null) {
+            return ResponseEntity.ok(vehicule);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
 }
 
 

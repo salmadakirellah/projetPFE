@@ -1,13 +1,13 @@
-package org.example.backend_ais_platform.security;
+package com.programmingtechie.userservice.security;
 
+import com.programmingtechie.userservice.model.User;
+import com.programmingtechie.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.example.backend_ais_platform.exceptions.UserNotFoundException;
-import org.example.backend_ais_platform.repository.UserRepository;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,8 +16,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var member = userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundException("There is no user available with this email: "+username));
-        return User.withUsername(member.getEmail()).password(member.getPassword()).roles(member.getRole().toString()).build();
+        return userRepository.findByUsername(username)
+                .map(CustomUserDetails::new)
+                .orElseThrow(() -> new RuntimeException("There is no user available with this email: "+username));
     }
 }

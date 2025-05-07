@@ -1,4 +1,4 @@
-package com.example.service_vehicule;
+package com.programmingtechie.service-vehicule;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

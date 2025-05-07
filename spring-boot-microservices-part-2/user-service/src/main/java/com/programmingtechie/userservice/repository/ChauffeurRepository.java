@@ -1,7 +1,9 @@
-package com.example.userservice.repository;
+package com.programmingtechie.userservice.repository;
 
-import com.example.userservice.model.Chauffeur;
+import com.programmingtechie.userservice.model.Chauffeur;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ChauffeurRepository extends JpaRepository<Chauffeur, Long> {
 }

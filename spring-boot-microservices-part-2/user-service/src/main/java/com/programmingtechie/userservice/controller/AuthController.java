@@ -1,7 +1,7 @@
-package com.example.userservice.controller;
+package com.programmingtechie.userservice.controller;
 
-import com.example.userservice.dto.*;
-import com.example.userservice.service.AuthService;
+import com.programmingtechie.userservice.dto.*;
+import com.programmingtechie.userservice.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
